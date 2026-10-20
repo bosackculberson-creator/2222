@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>像素山谷 · 30 帧背景动画</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#061329;color:#d9e8f7;font:15px system-ui,sans-serif}main{max-width:1600px;margin:auto;padding:28px 20px}h1{font-size:24px;font-weight:600;margin:0 0 8px}p{color:#9bb8d5;margin:8px 0 20px}.stage{overflow:auto;background:#020c1b;border:1px solid #24415d;border-radius:8px;padding:0;line-height:0}.stage canvas{display:block;width:100%;height:auto;image-rendering:pixelated}.stage.native canvas{width:1983px;height:793px}.bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:18px 0}button,a{font:inherit;color:#dcefff;background:#123153;border:1px solid #385879;border-radius:6px;padding:8px 12px;text-decoration:none;cursor:pointer}button:hover,a:hover{background:#1c456f}input{flex:1;min-width:150px;accent-color:#6eb6f0}output{font-variant-numeric:tabular-nums;min-width:86px}#status{font-size:13px}footer{color:#88a7c5;font-size:13px;margin-top:10px}
+</style>
+<main>
+<h1>像素山谷 · 背景动画</h1>
+<p>1983 × 793 · 30 帧 · 10 fps · 3 秒循环</p>
+<div class="stage" id="stage"><canvas id="view" width="1983" height="793" aria-label="瀑布与云雾循环动画"></canvas></div>
+<div class="bar">
+<button id="play" disabled>加载中</button>
+<button id="prev" disabled>上一帧</button>
+<button id="next" disabled>下一帧</button>
+<input id="frame" type="range" min="0" max="29" value="0" step="1" aria-label="选择动画帧" disabled>
+<output id="counter">01 / 30</output>
+<button id="scale">原始大小</button>
+<a href="background.gif" download>下载 GIF</a>
+</div>
+<div id="status" role="status">正在加载 PNG 序列…</div>
+<footer>PNG 无损预览。瀑布持续向下流动，云雾分层漂移。可暂停后使用左右方向键逐帧查看。</footer>
+</main>
+<script>
+const canvas=document.querySelector('#view'),ctx=canvas.getContext('2d');
+ctx.imageSmoothingEnabled=false;
+const play=document.querySelector('#play'),prev=document.querySelector('#prev'),next=document.querySelector('#next');
+const slider=document.querySelector('#frame'),counter=document.querySelector('#counter'),status=document.querySelector('#status');
+let images=[],index=0,playing=false,origin=0,last=-1;
+function show(i){index=(i+30)%30;ctx.drawImage(images[index],0,0);slider.value=index;counter.value=String(index+1).padStart(2,'0')+' / 30';}
+function pause(){playing=false;play.textContent='播放';}
+function tick(now){if(playing){const i=Math.floor((now-origin)/100)%30;if(i!==last){show(i);last=i;}}requestAnimationFrame(tick);}
+play.onclick=()=>{if(playing){pause();}else{playing=true;origin=performance.now()-index*100;play.textContent='暂停';last=-1;}};
+prev.onclick=()=>{pause();show(index-1);};next.onclick=()=>{pause();show(index+1);};
+slider.oninput=()=>{pause();show(Number(slider.value));};
+document.querySelector('#scale').onclick=e=>{const native=document.querySelector('#stage').classList.toggle('native');e.target.textContent=native?'适应窗口':'原始大小';};
+document.addEventListener('keydown',e=>{if(images.length!==30)return;if(e.key==='ArrowRight'){e.preventDefault();next.click();}if(e.key==='ArrowLeft'){e.preventDefault();prev.click();}if(e.code==='Space'&&e.target.tagName!=='BUTTON'){e.preventDefault();play.click();}});
+Promise.all(Array.from({length:30},(_,i)=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src='frames/frame_'+String(i+1).padStart(3,'0')+'.png';})))
+.then(loaded=>{images=loaded;show(0);[play,prev,next,slider].forEach(el=>el.disabled=false);play.textContent='播放';status.textContent='30 / 30 帧已加载，可离线播放。';play.click();requestAnimationFrame(tick);})
+.catch(()=>{status.textContent='PNG 加载失败。请下载完整文件夹，并保留 frames 子文件夹与本页面的相对位置。';});
+</script>
+</html>

@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "png_frames": 30,
+  "unique_frames": 30,
+  "gif_frames": 30,
+  "gif_durations_ms": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "exact_periodic_closure": true,
+  "mean_adjacent_difference": 0.5554004611567668,
+  "wrap_difference": 0.5192263707677512,
+  "max_adjacent_difference": 0.7029100019353237,
+  "fixed_pixel_fraction": 0.2971277294582768,
+  "water_downward_motion_correlation": {
+    "main": {
+      "down": 0.9996129854945276,
+      "up": 0.3104139745120509
+    },
+    "left": {
+      "down": 0.9996273974864598,
+      "up": -0.2014138761159636
+    },
+    "lower_middle": {
+      "down": 0.9986940459632979,
+      "up": 0.5885949625746811
+    },
+    "right_upper": {
+      "down": 0.9905020091845637,
+      "up": 0.5311194216428113
+    },
+    "right_lower": {
+      "down": 0.9059794812694572,
+      "up": -0.3056846645817858
+    }
+  },
+  "source_dimensions_unchanged": true,
+  "protected_architecture_unchanged": true,
+  "gif_palette_colors": 192,
+  "gif_decoded_frames_match_shared_palette_pngs": true
+}

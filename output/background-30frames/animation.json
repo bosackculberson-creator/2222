@@ -1,0 +1,18 @@
+{
+  "width": 1983,
+  "height": 793,
+  "frame_count": 30,
+  "fps": 10.0,
+  "duration_ms": 3000,
+  "frame_duration_ms": 100,
+  "loop": true,
+  "sequence": "frames/frame_%03d.png",
+  "first_frame": 1,
+  "last_frame": 30,
+  "source_sha256": "ee09a7df5d431bbcea4f6cfe236717e479c6a9518d93f51c6d18f3e65bb481d7",
+  "motion": {
+    "water": "downward, v(y)=sqrt(v0²+2gy); fixed crests; periodic inflow",
+    "clouds": "periodic horizontal atmospheric transport; pinned architecture"
+  },
+  "gif_palette_colors": 192
+}
