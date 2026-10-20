@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>30 帧透明像素前景预览</title>
+<style>
+body{margin:0;padding:24px;background:#14191f;color:#e8edf2;font:15px system-ui,sans-serif}main{max-width:1984px;margin:auto}h1{font-size:22px}button,select{padding:8px 12px;border:1px solid #687581;border-radius:5px;color:inherit;background:#29333d}label{display:inline-flex;gap:8px;align-items:center;margin-left:12px}.stage{overflow:auto;margin-top:20px;border:1px solid #4c5963;background-color:#64717a;background-image:linear-gradient(45deg,#75828a 25%,transparent 25%),linear-gradient(-45deg,#75828a 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#75828a 75%),linear-gradient(-45deg,transparent 75%,#75828a 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}canvas{display:block;width:1984px;height:793px;image-rendering:pixelated}p{color:#bac7d1}
+</style>
+<main>
+<h1>30 帧透明像素前景</h1>
+<p>原始尺寸 1984 × 793。默认 15 FPS / 2 秒循环。将整个文件夹下载到本地后打开本页即可预览。</p>
+<button id="play">暂停</button><button id="next">下一帧</button>
+<label>速度 <select id="fps"><option>10</option><option selected>15</option><option>20</option><option>30</option></select> FPS</label>
+<label>显示 <select id="scale"><option value="1" selected>原始像素 1:1</option><option value="0.5">缩小预览 50%</option><option value="fit">适应窗口</option></select></label>
+<p id="status">正在加载 30 帧…</p>
+<div class="stage"><canvas id="view" width="1984" height="793"></canvas></div>
+</main>
+<script>
+const canvas=document.querySelector('#view'),ctx=canvas.getContext('2d'),status=document.querySelector('#status');
+ctx.imageSmoothingEnabled=false;
+let frame=0,playing=true,fps=15,previous=0,ready=false;
+const frames=Array.from({length:30},(_,i)=>{const im=new Image();im.src=`frame_${String(i+1).padStart(3,'0')}.png`;return im});
+function draw(){ctx.clearRect(0,0,1984,793);ctx.drawImage(frames[frame],0,0);status.textContent=`第 ${frame+1} / 30 帧 · ${fps} FPS · 透明背景`}
+Promise.all(frames.map(im=>im.decode())).then(()=>{ready=true;draw()}).catch(()=>status.textContent='加载失败：请将本页与 30 张 PNG 放在同一文件夹。');
+document.querySelector('#play').onclick=()=>{playing=!playing;document.querySelector('#play').textContent=playing?'暂停':'播放';previous=0};
+document.querySelector('#next').onclick=()=>{playing=false;document.querySelector('#play').textContent='播放';if(ready){frame=(frame+1)%30;draw()}};
+document.querySelector('#fps').onchange=e=>{fps=Number(e.target.value);previous=0;if(ready)draw()};
+function size(){const v=document.querySelector('#scale').value;const s=v==='fit'?Math.min(1,(innerWidth-50)/1984):Number(v);canvas.style.width=`${1984*s}px`;canvas.style.height=`${793*s}px`}
+document.querySelector('#scale').onchange=size;addEventListener('resize',size);
+function tick(t){if(ready&&playing){if(!previous)previous=t;const dt=1000/fps;if(t-previous>=dt){const advance=Math.floor((t-previous)/dt);frame=(frame+advance)%30;previous+=advance*dt;draw()}}requestAnimationFrame(tick)}requestAnimationFrame(tick);
+</script>
+</html>
